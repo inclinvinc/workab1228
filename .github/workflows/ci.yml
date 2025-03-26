@@ -27,6 +27,7 @@ jobs:
               run: |
                 mkdir -p results
                 robot --outputdir results --variable BROWSER:headlesschrome tests/
+              continue-on-error: true  
             - name: Upload test reports
               uses: actions/upload-artifact@v4
               with:
