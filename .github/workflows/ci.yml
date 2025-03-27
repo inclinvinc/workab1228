@@ -37,5 +37,5 @@ jobs:
             - name: Print test summary
               if: always()
               run: |
-                rebot --report NONE --log NONE --output results/output.xml
+                rebot --report NONE --log NONE results/output.xml
     
