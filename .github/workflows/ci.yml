@@ -15,18 +15,22 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+
             - name: Set up Python
               uses: actions/setup-python@v5
               with:
                 python-version: '3.13'
+
             - name: Install dependencies
               run: |
                 python -m pip install --upgrade pip
                 pip install -r requirements.txt
+
             - name: Run robot framework tests
               run: |
                 mkdir -p results
                 robot --outputdir results --variable BROWSER:headlesschrome tests/
+
             - name: Upload test reports
               if: always()
               uses: actions/upload-artifact@v4
@@ -34,8 +38,18 @@ jobs:
                 name: Robot test reports
                 path: results/
                 retention-days: 7
-            - name: Print test summary
-              if: always()
+
+            - name: Generate GitHub Pages HTML report
               run: |
-                rebot --report NONE --log NONE results/output.xml
-    
+                # Convert the output XML to an HTML report (it should already be there)
+                rebot --outputdir results --report results/report.html results/output.xml
+                echo "Test report generated."
+
+            - name: Deploy HTML Report to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                publish_dir: ./results
+                destination_dir: /test-reports
+                user_name: "GitHub Actions"
+                user_email: "actions@github.com"
