@@ -34,3 +34,8 @@ jobs:
                 name: Robot test reports
                 path: results/
                 retention-days: 7
+            - name: Print test summary
+              if: always()
+              run: |
+                rebot --report NONE --log NONE --output results/output.xml
+    
