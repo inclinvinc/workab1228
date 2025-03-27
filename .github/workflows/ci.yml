@@ -41,11 +41,18 @@ jobs:
 
             - name: Generate GitHub Pages HTML report
               run: |
-                # Convert the output XML to an HTML report (it should already be there)
-                rebot --outputdir results --report results/report.html results/output.xml
-                echo "Test report generated."
+                # Check if output.xml exists
+                echo "Checking if output.xml exists..."
+                ls results/
+                if [ -f results/output.xml ]; then
+                  echo "output.xml found, generating report.html..."
+                  rebot --outputdir results --report results/report.html results/output.xml
+                else
+                  echo "output.xml not found!"
+                  exit 1
+                fi
 
-            - name: Deploy HTML Report to GitHub Pages
+            - name: Upload test reports to GitHub Pages
               uses: peaceiris/actions-gh-pages@v3
               with:
                 github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -53,3 +60,4 @@ jobs:
                 destination_dir: /test-reports
                 user_name: "GitHub Actions"
                 user_email: "actions@github.com"
+              if: always()
